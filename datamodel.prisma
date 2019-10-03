@@ -1,0 +1,39 @@
+
+type User {
+  id: ID! @id
+  name: String!
+  email: String! @unique
+  regNo: String! @unique
+  gender: String
+  department: Department @relation(onDelete: CASCADE)
+  faculty: Faculty @relation(onDelete: CASCADE)
+  courses: [Course]
+  level: String
+  phone: String
+  address: String
+  image: String
+}
+
+type Course {
+  id: ID! @id
+  name: String! @unique
+  department: Department!
+  creditUnits: Int!
+  students: [User]
+  description: String!
+  level: String!
+}
+
+type Faculty {
+  id: ID! @id
+  name: String! @unique
+  departments: [Department!]!
+}
+
+type Department {
+  id: ID! @id
+  name: String! @unique
+  faculty: Faculty!
+  courses: [Course!]!
+  students: [User!]!
+}
