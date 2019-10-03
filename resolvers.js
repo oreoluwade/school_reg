@@ -7,6 +7,18 @@ module.exports = {
         },
         course: (_, { id }, context) => {
             return context.prisma.course({ id });
+        },
+        courses: (parent, args, context) => {
+            return context.prisma.courses();
+        },
+        departments: (parent, args, context) => {
+            return context.prisma.departments();
+        },
+        faculties: (parent, args, context) => {
+            return context.prisma.faculties();
+        },
+        students: (parent, args, context) => {
+            return context.prisma.users();
         }
     },
     Mutation: {
@@ -83,6 +95,12 @@ module.exports = {
                 where: { id: args.id },
                 data: getDataVariant(args)
             });
+        },
+        updateDepartment: (parent, { id, name }, context) => {
+            return context.prisma.updateDepartment({
+                where: { id },
+                data: { name }
+            });
         }
     },
 
@@ -95,6 +113,33 @@ module.exports = {
         },
         department: ({ id }, args, context) => {
             return context.prisma.user({ id }).department();
+        }
+    },
+
+    Department: {
+        courses: ({ id }, args, context) => {
+            return context.prisma.department({ id }).courses();
+        },
+        faculty: ({ id }, args, context) => {
+            return context.prisma.department({ id }).faculty();
+        },
+        students: ({ id }, args, context) => {
+            return context.prisma.department({ id }).students();
+        }
+    },
+
+    Course: {
+        department: ({ id }, args, context) => {
+            return context.prisma.course({ id }).department();
+        },
+        students: ({ id }, args, context) => {
+            return context.prisma.course({ id }).students();
+        }
+    },
+
+    Faculty: {
+        departments: ({ id }, args, context) => {
+            return context.prisma.faculty({ id }).departments();
         }
     }
 };
