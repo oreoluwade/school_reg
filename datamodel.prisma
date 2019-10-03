@@ -5,8 +5,8 @@ type User {
   email: String! @unique
   regNo: String! @unique
   gender: String
-  department: Department @relation(onDelete: CASCADE)
-  faculty: Faculty @relation(onDelete: CASCADE)
+  department: Department @relation(name: "DepartmentsUsersBelongTo", onDelete: CASCADE)
+  faculty: Faculty
   courses: [Course]
   level: String
   phone: String
@@ -27,13 +27,13 @@ type Course {
 type Faculty {
   id: ID! @id
   name: String! @unique
-  departments: [Department!]!
+  departments: [Department!]! @relation(onDelete: CASCADE)
 }
 
 type Department {
   id: ID! @id
   name: String! @unique
   faculty: Faculty!
-  courses: [Course!]!
-  students: [User!]!
+  courses: [Course!]! @relation(onDelete: CASCADE)
+  students: [User!]! @relation(name: "DepartmentsUsersBelongTo")
 }

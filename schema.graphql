@@ -1,0 +1,48 @@
+type Query {
+  user(id: ID!): User
+  course(id: ID!): Course
+}
+
+type Mutation {
+  registerUser(name: String!, email: String!, regNo: String!, gender: String, phone: String, address: String): User!
+  updateUserDetails(id: ID!, name: String, gender: String, address: String, phone: String, image: String, faculty: String, department: String): User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  regNo: String!
+  gender: String
+  department: Department
+  faculty: Faculty
+  courses: [Course]!
+  level: String
+  phone: String
+  address: String
+  image: String
+}
+
+type Course {
+  id: ID!
+  name: String!
+  department: Department!
+  creditUnits: Int!
+  students: [User]!
+  description: String!
+  level: String!
+}
+
+type Faculty {
+  id: ID!
+  name: String!
+  departments: [Department!]!
+}
+
+type Department {
+  id: ID!
+  name: String!
+  faculty: Faculty!
+  courses: [Course!]!
+  students: [User]
+}
