@@ -10,7 +10,8 @@ type Query {
 type Mutation {
   registerUser(name: String!, email: String!, regNo: String!, gender: String, phone: String, address: String): User!
   updateUserDetails(id: ID!, name: String, gender: String, address: String, phone: String, image: String, faculty: String, department: String): User
-  updateDepartment(id: ID!, name: String): Department
+  updateDepartment(id: ID!, name: String, courses: [ID]): Department
+  updateCourse(id: ID!, name: String, department: ID!): Course
 }
 
 type User {

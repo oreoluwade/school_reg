@@ -25,6 +25,7 @@ module.exports = {
         registerUser: (_, args, context) => {
             return context.prisma.createUser({ ...args });
         },
+
         updateUserDetails: (_, args, context) => {
             const copiedArgs = JSON.parse(JSON.stringify(args));
             // Did this to prevent faculty and department from being added directly to the update object
@@ -96,10 +97,44 @@ module.exports = {
                 data: getDataVariant(args)
             });
         },
-        updateDepartment: (parent, { id, name }, context) => {
+
+        // WIP
+        updateDepartment: async (parent, { id, name, courses }, context) => {
+            const initialCourses = await context.prisma
+                .department({ id })
+                .courses();
+
+            const coursesToAppend = await context.prisma.courses({
+                where: {
+                    id_in: courses
+                }
+            });
+
             return context.prisma.updateDepartment({
                 where: { id },
-                data: { name }
+                data: {
+                    name
+                    // courses: {
+                    //     set: initialCourses.concat(coursesToAppend)
+                    // }
+                }
+            });
+        },
+
+        updateCourse: (parent, { id, name, department }, context) => {
+            return context.prisma.updateCourse({
+                where: { id },
+                data: {
+                    name,
+                    department: {
+                        update: {
+                            where: { id: department },
+                            data: {
+                                courses: {}
+                            }
+                        }
+                    }
+                }
             });
         }
     },

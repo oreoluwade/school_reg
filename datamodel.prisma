@@ -17,7 +17,7 @@ type User {
 type Course {
   id: ID! @id
   name: String! @unique
-  department: Department!
+  department: Department! @relation(name: "CoursesInADepartment")
   creditUnits: Int!
   students: [User]
   description: String!
@@ -34,6 +34,6 @@ type Department {
   id: ID! @id
   name: String! @unique
   faculty: Faculty!
-  courses: [Course!]! @relation(onDelete: CASCADE)
+  courses: [Course!]! @relation(name: "CoursesInADepartment", onDelete: CASCADE)
   students: [User!]! @relation(name: "DepartmentsUsersBelongTo")
 }
