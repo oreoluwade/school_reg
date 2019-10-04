@@ -78,6 +78,13 @@ module.exports = {
             });
         },
 
+        updateFaculty: async (_, { id, name }, context) => {
+            return context.prisma.updateFaculty({
+                where: { id },
+                data: { name }
+            });
+        },
+
         updateDepartment: async (_, { id, name }, context) => {
             return context.prisma.updateDepartment({
                 where: { id },
