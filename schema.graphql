@@ -8,10 +8,14 @@ type Query {
 }
 
 type Mutation {
-  registerUser(name: String!, email: String!, regNo: String!, gender: String, phone: String, address: String): User!
-  updateUserDetails(id: ID!, name: String, gender: String, address: String, phone: String, image: String, faculty: String, department: String): User
-  updateDepartment(id: ID!, name: String, courses: [ID]): Department
-  updateCourse(id: ID!, name: String, department: ID!): Course
+  createUser(name: String!, email: String!, gender: String, phone: String, address: String): User!
+  createFaculty(name: String!): Faculty!
+  createDepartment(name: String!, faculty: String!): Department!
+  createCourse(name: String!, creditUnits: Int!, description: String, level: String, department: String!): Course!
+  updateUserDetails(id: ID!, name: String, gender: String, address: String, phone: String, image: String, department: String, faculty: String, courses: String): User
+  updateFaculty(id: ID!, name: String): Faculty
+  updateDepartment(id: ID!, name: String, course: String): Department
+  updateCourse(id: ID!, name: String, creditUnits: Int, description: String): Course
 }
 
 type User {
@@ -34,7 +38,7 @@ type Course {
   name: String!
   department: Department!
   creditUnits: Int!
-  students: [User]!
+  students: [User!]!
   description: String!
   level: String!
 }
@@ -43,6 +47,7 @@ type Faculty {
   id: ID!
   name: String!
   departments: [Department!]!
+  students: [User!]!
 }
 
 type Department {
@@ -50,5 +55,5 @@ type Department {
   name: String!
   faculty: Faculty!
   courses: [Course!]!
-  students: [User]
+  students: [User!]!
 }

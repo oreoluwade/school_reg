@@ -623,6 +623,7 @@ type Faculty {
   id: ID!
   name: String!
   departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department!]
+  students(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
 }
 
 type FacultyConnection {
@@ -635,11 +636,7 @@ input FacultyCreateInput {
   id: ID
   name: String!
   departments: DepartmentCreateManyWithoutFacultyInput
-}
-
-input FacultyCreateOneInput {
-  create: FacultyCreateInput
-  connect: FacultyWhereUniqueInput
+  students: UserCreateManyWithoutFacultyInput
 }
 
 input FacultyCreateOneWithoutDepartmentsInput {
@@ -647,9 +644,21 @@ input FacultyCreateOneWithoutDepartmentsInput {
   connect: FacultyWhereUniqueInput
 }
 
+input FacultyCreateOneWithoutStudentsInput {
+  create: FacultyCreateWithoutStudentsInput
+  connect: FacultyWhereUniqueInput
+}
+
 input FacultyCreateWithoutDepartmentsInput {
   id: ID
   name: String!
+  students: UserCreateManyWithoutFacultyInput
+}
+
+input FacultyCreateWithoutStudentsInput {
+  id: ID
+  name: String!
+  departments: DepartmentCreateManyWithoutFacultyInput
 }
 
 type FacultyEdge {
@@ -687,27 +696,14 @@ input FacultySubscriptionWhereInput {
   NOT: [FacultySubscriptionWhereInput!]
 }
 
-input FacultyUpdateDataInput {
-  name: String
-  departments: DepartmentUpdateManyWithoutFacultyInput
-}
-
 input FacultyUpdateInput {
   name: String
   departments: DepartmentUpdateManyWithoutFacultyInput
+  students: UserUpdateManyWithoutFacultyInput
 }
 
 input FacultyUpdateManyMutationInput {
   name: String
-}
-
-input FacultyUpdateOneInput {
-  create: FacultyCreateInput
-  update: FacultyUpdateDataInput
-  upsert: FacultyUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: FacultyWhereUniqueInput
 }
 
 input FacultyUpdateOneRequiredWithoutDepartmentsInput {
@@ -717,18 +713,33 @@ input FacultyUpdateOneRequiredWithoutDepartmentsInput {
   connect: FacultyWhereUniqueInput
 }
 
-input FacultyUpdateWithoutDepartmentsDataInput {
-  name: String
+input FacultyUpdateOneWithoutStudentsInput {
+  create: FacultyCreateWithoutStudentsInput
+  update: FacultyUpdateWithoutStudentsDataInput
+  upsert: FacultyUpsertWithoutStudentsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: FacultyWhereUniqueInput
 }
 
-input FacultyUpsertNestedInput {
-  update: FacultyUpdateDataInput!
-  create: FacultyCreateInput!
+input FacultyUpdateWithoutDepartmentsDataInput {
+  name: String
+  students: UserUpdateManyWithoutFacultyInput
+}
+
+input FacultyUpdateWithoutStudentsDataInput {
+  name: String
+  departments: DepartmentUpdateManyWithoutFacultyInput
 }
 
 input FacultyUpsertWithoutDepartmentsInput {
   update: FacultyUpdateWithoutDepartmentsDataInput!
   create: FacultyCreateWithoutDepartmentsInput!
+}
+
+input FacultyUpsertWithoutStudentsInput {
+  update: FacultyUpdateWithoutStudentsDataInput!
+  create: FacultyCreateWithoutStudentsInput!
 }
 
 input FacultyWhereInput {
@@ -763,6 +774,9 @@ input FacultyWhereInput {
   departments_every: DepartmentWhereInput
   departments_some: DepartmentWhereInput
   departments_none: DepartmentWhereInput
+  students_every: UserWhereInput
+  students_some: UserWhereInput
+  students_none: UserWhereInput
   AND: [FacultyWhereInput!]
   OR: [FacultyWhereInput!]
   NOT: [FacultyWhereInput!]
@@ -870,7 +884,7 @@ input UserCreateInput {
   regNo: String!
   gender: String
   department: DepartmentCreateOneWithoutStudentsInput
-  faculty: FacultyCreateOneInput
+  faculty: FacultyCreateOneWithoutStudentsInput
   courses: CourseCreateManyWithoutStudentsInput
   level: String
   phone: String
@@ -888,6 +902,11 @@ input UserCreateManyWithoutDepartmentInput {
   connect: [UserWhereUniqueInput!]
 }
 
+input UserCreateManyWithoutFacultyInput {
+  create: [UserCreateWithoutFacultyInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
 input UserCreateWithoutCoursesInput {
   id: ID
   name: String!
@@ -895,7 +914,7 @@ input UserCreateWithoutCoursesInput {
   regNo: String!
   gender: String
   department: DepartmentCreateOneWithoutStudentsInput
-  faculty: FacultyCreateOneInput
+  faculty: FacultyCreateOneWithoutStudentsInput
   level: String
   phone: String
   address: String
@@ -908,7 +927,21 @@ input UserCreateWithoutDepartmentInput {
   email: String!
   regNo: String!
   gender: String
-  faculty: FacultyCreateOneInput
+  faculty: FacultyCreateOneWithoutStudentsInput
+  courses: CourseCreateManyWithoutStudentsInput
+  level: String
+  phone: String
+  address: String
+  image: String
+}
+
+input UserCreateWithoutFacultyInput {
+  id: ID
+  name: String!
+  email: String!
+  regNo: String!
+  gender: String
+  department: DepartmentCreateOneWithoutStudentsInput
   courses: CourseCreateManyWithoutStudentsInput
   level: String
   phone: String
@@ -1110,7 +1143,7 @@ input UserUpdateInput {
   regNo: String
   gender: String
   department: DepartmentUpdateOneWithoutStudentsInput
-  faculty: FacultyUpdateOneInput
+  faculty: FacultyUpdateOneWithoutStudentsInput
   courses: CourseUpdateManyWithoutStudentsInput
   level: String
   phone: String
@@ -1164,6 +1197,18 @@ input UserUpdateManyWithoutDepartmentInput {
   updateMany: [UserUpdateManyWithWhereNestedInput!]
 }
 
+input UserUpdateManyWithoutFacultyInput {
+  create: [UserCreateWithoutFacultyInput!]
+  delete: [UserWhereUniqueInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutFacultyInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutFacultyInput!]
+  deleteMany: [UserScalarWhereInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+}
+
 input UserUpdateManyWithWhereNestedInput {
   where: UserScalarWhereInput!
   data: UserUpdateManyDataInput!
@@ -1175,7 +1220,7 @@ input UserUpdateWithoutCoursesDataInput {
   regNo: String
   gender: String
   department: DepartmentUpdateOneWithoutStudentsInput
-  faculty: FacultyUpdateOneInput
+  faculty: FacultyUpdateOneWithoutStudentsInput
   level: String
   phone: String
   address: String
@@ -1187,7 +1232,20 @@ input UserUpdateWithoutDepartmentDataInput {
   email: String
   regNo: String
   gender: String
-  faculty: FacultyUpdateOneInput
+  faculty: FacultyUpdateOneWithoutStudentsInput
+  courses: CourseUpdateManyWithoutStudentsInput
+  level: String
+  phone: String
+  address: String
+  image: String
+}
+
+input UserUpdateWithoutFacultyDataInput {
+  name: String
+  email: String
+  regNo: String
+  gender: String
+  department: DepartmentUpdateOneWithoutStudentsInput
   courses: CourseUpdateManyWithoutStudentsInput
   level: String
   phone: String
@@ -1205,6 +1263,11 @@ input UserUpdateWithWhereUniqueWithoutDepartmentInput {
   data: UserUpdateWithoutDepartmentDataInput!
 }
 
+input UserUpdateWithWhereUniqueWithoutFacultyInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutFacultyDataInput!
+}
+
 input UserUpsertWithWhereUniqueWithoutCoursesInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutCoursesDataInput!
@@ -1215,6 +1278,12 @@ input UserUpsertWithWhereUniqueWithoutDepartmentInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutDepartmentDataInput!
   create: UserCreateWithoutDepartmentInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutFacultyInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutFacultyDataInput!
+  create: UserCreateWithoutFacultyInput!
 }
 
 input UserWhereInput {

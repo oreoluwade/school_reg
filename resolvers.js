@@ -2,8 +2,8 @@ const { prisma } = require('./generated/prisma-client');
 
 module.exports = {
     Query: {
-        user: (_, args, context) => {
-            return context.prisma.user({ id: args.id });
+        user: (_, { id }, context) => {
+            return context.prisma.user({ id });
         },
         course: (_, { id }, context) => {
             return context.prisma.course({ id });
@@ -22,118 +22,76 @@ module.exports = {
         }
     },
     Mutation: {
-        registerUser: (_, args, context) => {
-            return context.prisma.createUser({ ...args });
+        createUser: (_, args, context) => {
+            return context.prisma.createUser({
+                ...args,
+                regNo: Date.now().toString()
+            });
+        },
+
+        createFaculty: (_, { name }, context) => {
+            return context.prisma.createFaculty({
+                name
+            });
+        },
+
+        createDepartment: (_, { name, faculty }, context) => {
+            return context.prisma.createDepartment({
+                name,
+                faculty: {
+                    connect: { id: faculty }
+                }
+            });
+        },
+
+        createCourse: (_, args, context) => {
+            return context.prisma.createCourse({
+                name: args.name,
+                description: args.description,
+                creditUnits: args.creditUnits,
+                level: args.level,
+                department: {
+                    connect: { id: args.department }
+                }
+            });
         },
 
         updateUserDetails: (_, args, context) => {
-            const copiedArgs = JSON.parse(JSON.stringify(args));
-            // Did this to prevent faculty and department from being added directly to the update object
-            const unconnectedData = Object.entries(copiedArgs).reduce(
-                (acc, next) => {
-                    if (
-                        next[0] !== 'department' &&
-                        next[0] !== 'faculty' &&
-                        next[0] !== 'id'
-                    ) {
-                        acc[next[0]] = next[1];
-                    }
-                    return acc;
-                },
-                {}
-            );
-
-            const getDataVariant = args => {
-                let data;
-                if ('faculty' in args && !('department' in args)) {
-                    data = {
-                        ...unconnectedData,
-                        faculty: {
-                            connect: {
-                                id: args.faculty
-                            }
-                        }
-                    };
-                }
-
-                if (!('faculty' in args) && 'department' in args) {
-                    data = {
-                        ...unconnectedData,
-                        department: {
-                            connect: {
-                                id: args.department
-                            }
-                        }
-                    };
-                }
-
-                if ('faculty' in args && 'department' in args) {
-                    data = {
-                        ...unconnectedData,
-                        department: {
-                            connect: {
-                                id: args.department
-                            }
-                        },
-                        faculty: {
-                            connect: {
-                                id: args.faculty
-                            }
-                        }
-                    };
-                }
-
-                if (!('faculty' in args) && !('department' in args)) {
-                    data = {
-                        ...unconnectedData
-                    };
-                }
-
-                return data;
-            };
-
             return prisma.updateUser({
                 where: { id: args.id },
-                data: getDataVariant(args)
+                data: {
+                    name: args.name,
+                    gender: args.gender,
+                    address: args.address,
+                    phone: args.phone,
+                    image: args.image,
+                    department: args.department && {
+                        connect: { id: args.department }
+                    },
+                    faculty: args.faculty && {
+                        connect: { id: args.faculty }
+                    },
+                    courses: args.courses && {
+                        connect: { id: args.courses }
+                    }
+                }
             });
         },
 
-        // WIP
-        updateDepartment: async (parent, { id, name, courses }, context) => {
-            const initialCourses = await context.prisma
-                .department({ id })
-                .courses();
-
-            const coursesToAppend = await context.prisma.courses({
-                where: {
-                    id_in: courses
-                }
-            });
-
+        updateDepartment: async (_, { id, name }, context) => {
             return context.prisma.updateDepartment({
                 where: { id },
-                data: {
-                    name
-                    // courses: {
-                    //     set: initialCourses.concat(coursesToAppend)
-                    // }
-                }
+                data: { name }
             });
         },
 
-        updateCourse: (parent, { id, name, department }, context) => {
+        updateCourse: (_, { id, name, creditUnits, description }, context) => {
             return context.prisma.updateCourse({
                 where: { id },
                 data: {
                     name,
-                    department: {
-                        update: {
-                            where: { id: department },
-                            data: {
-                                courses: {}
-                            }
-                        }
-                    }
+                    creditUnits,
+                    description
                 }
             });
         }
@@ -175,6 +133,9 @@ module.exports = {
     Faculty: {
         departments: ({ id }, args, context) => {
             return context.prisma.faculty({ id }).departments();
+        },
+        students: ({ id }, args, context) => {
+            return context.prisma.faculty({ id }).students();
         }
     }
 };
